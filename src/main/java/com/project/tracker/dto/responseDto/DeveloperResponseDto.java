@@ -1,6 +1,7 @@
-package com.project.tracker.models;
+package com.project.tracker.dto.responseDto;
 
-import jakarta.persistence.*;
+import com.project.tracker.models.Task;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,15 +9,11 @@ import java.util.List;
 
 @Getter
 @Setter
-@Entity
-public class Developer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Builder
+public class DeveloperResponseDto {
     private int id;
     private String name;
     private String email;
     private String skills;
-
-    @OneToMany(mappedBy = "developer")
     private List<Task> tasks;
 }

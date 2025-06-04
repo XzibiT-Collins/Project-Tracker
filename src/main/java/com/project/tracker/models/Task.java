@@ -16,8 +16,13 @@ public class Task {
     private String title;
     private String description;
     private String status;
-    private Date date;
-    //optional assignment to a Developer
-    @OneToOne
+    private Date dueDate;
+
+    @ManyToOne(optional = true) //optional assignment to a Developer
+    @JoinColumn(name = "developer_id")
     private Developer developer;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "project_id")
+    private Project project;
 }

@@ -1,25 +1,21 @@
-package com.project.tracker.models;
+package com.project.tracker.dto.responseDto;
 
-import jakarta.persistence.*;
+import com.project.tracker.models.Task;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
 
 import java.sql.Date;
 import java.util.List;
 
 @Getter
 @Setter
-@Entity
-public class Project {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Builder
+public class ProjectResponseDto {
     private int id;
     private String projectName;
     private String description;
     private Date deadline;
     private String status;
-
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Task> tasks;
 }
