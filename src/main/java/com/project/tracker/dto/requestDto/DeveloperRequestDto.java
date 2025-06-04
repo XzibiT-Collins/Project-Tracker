@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
+import java.util.Set;
 
 public record DeveloperRequestDto(
     @NotBlank(message = "Name cannot be blank.")
@@ -16,7 +17,5 @@ public record DeveloperRequestDto(
     String email,
 
     @NotBlank(message = "Please add a skill.")
-    String skills,
-
-    List<Task> tasks
+    Set<String> skills
 ) {}

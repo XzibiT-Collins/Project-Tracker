@@ -1,21 +1,27 @@
 package com.project.tracker.models;
 
+import com.project.tracker.statusEnum.StatusEnum;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
     private String description;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
+
     private Date dueDate;
 
     @ManyToOne(optional = true) //optional assignment to a Developer

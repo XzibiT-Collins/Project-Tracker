@@ -1,6 +1,7 @@
 package com.project.tracker.models;
 
 import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.types.ObjectId;
@@ -10,6 +11,7 @@ import java.util.Date;
 
 @Getter
 @Setter
+@Builder
 @Document(collection = "audit_log")
 public class AuditLog {
     @Id
