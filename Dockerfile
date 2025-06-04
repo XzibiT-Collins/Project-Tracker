@@ -22,5 +22,8 @@ WORKDIR /app
 #Copy the java compiled file .jar from builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
+#Expose port for application
+EXPOSE 8080
+
 #Run springboot application
 ENTRYPOINT ["java", "-jar", "app.jar"]
