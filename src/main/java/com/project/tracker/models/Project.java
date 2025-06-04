@@ -1,5 +1,6 @@
 package com.project.tracker.models;
 
+import com.project.tracker.statusEnum.StatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +21,9 @@ public class Project {
     private String projectName;
     private String description;
     private Date deadline;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Task> tasks;

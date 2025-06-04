@@ -1,6 +1,7 @@
 package com.project.tracker.dto.responseDto;
 
 import com.project.tracker.models.Task;
+import com.project.tracker.statusEnum.StatusEnum;
 
 import java.sql.Date;
 import java.util.List;
@@ -10,6 +11,6 @@ public record ProjectResponseDto(
     String projectName,
     String description,
     Date deadline,
-    String status,
+    StatusEnum status,
     List<Task>tasks
 ) {}

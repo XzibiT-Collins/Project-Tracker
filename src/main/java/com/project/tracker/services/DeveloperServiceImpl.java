@@ -1,37 +1,79 @@
 package com.project.tracker.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.tracker.dto.requestDto.DeveloperRequestDto;
+import com.project.tracker.dto.responseDto.DeveloperResponseDto;
 import com.project.tracker.models.Developer;
+import com.project.tracker.repositories.DeveloperRepository;
 import com.project.tracker.services.serviceInterfaces.DeveloperService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DeveloperServiceImpl implements DeveloperService {
 
+    private final ObjectMapper objectMapper;
+    private final DeveloperRepository developerRepository;
+
+    public DeveloperServiceImpl(DeveloperRepository developerRepository,ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+        this.developerRepository = developerRepository;
+    }
+
     @Override
-    public Developer addDeveloper(DeveloperRequestDto requestDto) {
-        return null;
+    public DeveloperResponseDto addDeveloper(DeveloperRequestDto requestDto) {
+        Developer developer = Developer.builder()
+                .name(requestDto.name())
+                .email(requestDto.email())
+                .skills(requestDto.skills())
+                .build();
+        return objectMapper
+                .convertValue(developerRepository.save(developer),
+                        DeveloperResponseDto.class);
     }
 
     @Override
     public void deleteDeveloper(int id) {
-
+        Developer developer = developerRepository.findById(id).orElseThrow(); // Throw exception if not found
+        developerRepository.delete(developer);
     }
 
     @Override
-    public Developer updateDeveloper(DeveloperRequestDto requestDto) {
-        return null;
+    public DeveloperResponseDto updateDeveloper(int id, DeveloperRequestDto requestDto) {
+        //fetch developer to be updated
+        if(!developerRepository.existsById(id)){
+            //Throw exception if not found
+        }
+
+        Developer updatedDeveloper = Developer.builder()
+                .id(id)
+                .name(requestDto.name())
+                .email(requestDto.email())
+                .skills(requestDto.skills())
+                .build();
+
+        return objectMapper
+                .convertValue(developerRepository.save(updatedDeveloper),
+                        DeveloperResponseDto.class);
     }
 
     @Override
-    public Developer getDeveloperById(int id) {
-        return null;
+    public DeveloperResponseDto getDeveloperById(int id) {
+        Developer developer = developerRepository.findById(id).orElseThrow(); // Throw exception if not found
+        return objectMapper
+                .convertValue(developer,
+                        DeveloperResponseDto.class);
     }
 
     @Override
-    public List<Developer> getAllDevelopers() {
-        return List.of();
+    public List<DeveloperResponseDto> getAllDevelopers() {
+        List<Developer> developers = developerRepository.findAll();
+        return developers.stream()
+                .map(developer -> objectMapper
+                        .convertValue(developer,
+                                DeveloperResponseDto.class))
+                .collect(Collectors.toList());
     }
 }

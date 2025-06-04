@@ -1,5 +1,6 @@
 package com.project.tracker.dto.requestDto;
 
+import com.project.tracker.statusEnum.StatusEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -14,7 +15,7 @@ public record TaskRequestDto(
         String description,
 
         @NotBlank(message = "Task must have a status.")
-        String status,
+        StatusEnum status,
 
         @NotNull(message = "Task must have a due date.")
         Date dueDate,
