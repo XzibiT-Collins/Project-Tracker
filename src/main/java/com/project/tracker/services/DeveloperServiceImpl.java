@@ -3,6 +3,7 @@ package com.project.tracker.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.tracker.dto.requestDto.DeveloperRequestDto;
 import com.project.tracker.dto.responseDto.DeveloperResponseDto;
+import com.project.tracker.exceptions.customExceptions.DeveloperNotFoundException;
 import com.project.tracker.models.Developer;
 import com.project.tracker.repositories.DeveloperRepository;
 import com.project.tracker.services.serviceInterfaces.DeveloperService;
@@ -36,7 +37,10 @@ public class DeveloperServiceImpl implements DeveloperService {
 
     @Override
     public void deleteDeveloper(int id) {
-        Developer developer = developerRepository.findById(id).orElseThrow(); // Throw exception if not found
+        Developer developer = developerRepository
+                .findById(id).
+                orElseThrow(()->new DeveloperNotFoundException
+                        ("Developer with ID: "+id +" not found")); // Throw exception if not found
         developerRepository.delete(developer);
     }
 
@@ -45,6 +49,7 @@ public class DeveloperServiceImpl implements DeveloperService {
         //fetch developer to be updated
         if(!developerRepository.existsById(id)){
             //Throw exception if not found
+            throw  new DeveloperNotFoundException("Developer with ID: "+id+" not found");
         }
 
         Developer updatedDeveloper = Developer.builder()
@@ -61,7 +66,10 @@ public class DeveloperServiceImpl implements DeveloperService {
 
     @Override
     public DeveloperResponseDto getDeveloperById(int id) {
-        Developer developer = developerRepository.findById(id).orElseThrow(); // Throw exception if not found
+        Developer developer = developerRepository
+                .findById(id)
+                .orElseThrow(()-> new DeveloperNotFoundException
+                        ("Developer with ID: "+id+" not found")); // Throw exception if not found
         return objectMapper
                 .convertValue(developer,
                         DeveloperResponseDto.class);

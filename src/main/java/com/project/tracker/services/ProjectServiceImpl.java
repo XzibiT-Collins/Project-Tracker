@@ -3,10 +3,13 @@ package com.project.tracker.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.tracker.dto.requestDto.ProjectRequestDto;
 import com.project.tracker.dto.responseDto.ProjectResponseDto;
+import com.project.tracker.exceptions.customExceptions.ProjectNotFoundException;
 import com.project.tracker.models.Project;
 import com.project.tracker.repositories.ProjectRepository;
 import com.project.tracker.services.serviceInterfaces.ProjectService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,8 +36,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public void deleteProject(int id) {
-        Project project = projectRepository.findById(id).orElseThrow();//Throw exception if not found
+        Project project = projectRepository
+                .findById(id)
+                .orElseThrow(()-> new ProjectNotFoundException
+                        ("Project with ID: "+ id +" not found"));
         projectRepository.deleteById(id);
     }
 
@@ -42,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectResponseDto updateProject(int id,ProjectRequestDto requestDto) {
         //fetch project to be updated
         if(!projectRepository.existsById(id)){
-            //Throw exception if not found
+            throw new ProjectNotFoundException("Project with ID: "+id+" not found");
         }
 
         Project updatedProject = Project.builder()
@@ -57,7 +64,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectResponseDto getProjectById(int id) {
-        Project project = projectRepository.findById(id).orElseThrow(); // Throw exception if not found
+        Project project = projectRepository
+                .findById(id)
+                .orElseThrow(()-> new ProjectNotFoundException
+                        ("Project with ID: "+ id +" not found"));
         return objectMapper.convertValue(project, ProjectResponseDto.class);
     }
 

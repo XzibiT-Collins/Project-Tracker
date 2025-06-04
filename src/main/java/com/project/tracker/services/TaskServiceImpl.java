@@ -3,6 +3,9 @@ package com.project.tracker.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.tracker.dto.requestDto.TaskRequestDto;
 import com.project.tracker.dto.responseDto.TaskResponseDto;
+import com.project.tracker.exceptions.customExceptions.DeveloperNotFoundException;
+import com.project.tracker.exceptions.customExceptions.ProjectNotFoundException;
+import com.project.tracker.exceptions.customExceptions.TaskNotFoundException;
 import com.project.tracker.models.Developer;
 import com.project.tracker.models.Project;
 import com.project.tracker.models.Task;
@@ -37,12 +40,14 @@ public class TaskServiceImpl implements TaskService {
         //fetch the developer to be assigned to the task
         Developer developer = developerRepository
                 .findById(requestDto.developerId())
-                .orElseThrow(); //Throw exception if not found
+                .orElseThrow(()-> new DeveloperNotFoundException
+                        ("Developer with ID: "+ requestDto.developerId() + "not found"));
 
         //Fetch the project to which the task is assigned to
         Project project = projectRepository
                 .findById(requestDto.projectId())
-                .orElseThrow();
+                .orElseThrow(()-> new ProjectNotFoundException
+                        ("Project with ID: "+requestDto.projectId()+" not found"));
 
         Task task = Task.builder()
                 .title(requestDto.title())
@@ -62,7 +67,7 @@ public class TaskServiceImpl implements TaskService {
     public void deleteTask(int id) {
         //Check if the task exists
         if(!taskRepository.existsById(id)){
-           //throw exception if not found
+           throw new TaskNotFoundException("Task with ID: "+id+" not found");
         }
 
         taskRepository.deleteById(id);
@@ -72,17 +77,21 @@ public class TaskServiceImpl implements TaskService {
     public TaskResponseDto updateTask(int id,TaskRequestDto requestDto) {
         //check if the task to be updated exists
         if(!taskRepository.existsById(id)){
-            //throw exception if not found
+            throw new TaskNotFoundException("Task with ID: "+id+" not found");
         }
 
         //Fetch the project to which the task is assigned to
         Project project = projectRepository
                 .findById(requestDto.projectId())
-                .orElseThrow();
+                .orElseThrow(()-> new ProjectNotFoundException
+                        ("Project with ID: "+requestDto.projectId()+" not found"));
 
         //check if the task project is being updated
         if(project.getId() != requestDto.projectId()){
-            project = projectRepository.findById(requestDto.projectId()).orElseThrow();
+            project = projectRepository
+                    .findById(requestDto.projectId())
+                    .orElseThrow(()-> new ProjectNotFoundException
+                            ("The project you are trying to update to does not exist"));
         }
 
         Task updatedTask = Task.builder()
@@ -98,7 +107,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponseDto getTaskById(int id) {
-        Task task = taskRepository.findById(id).orElseThrow(); // Throw exception if not found
+        Task task = taskRepository
+                .findById(id)
+                .orElseThrow(()-> new TaskNotFoundException
+                        ("Task with ID: "+id+" not found"));
         return objectMapper.convertValue(task, TaskResponseDto.class);
     }
 
