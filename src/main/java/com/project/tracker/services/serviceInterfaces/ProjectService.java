@@ -11,5 +11,5 @@ public interface ProjectService {
     void deleteProject(int id);
     ProjectResponseDto updateProject(int id,ProjectRequestDto requestDto);
     ProjectResponseDto getProjectById(int id);
-    List<ProjectResponseDto> getAllProjects();
+    List<ProjectResponseDto> getAllProjects(int pageNumber,String sortBy);
 }

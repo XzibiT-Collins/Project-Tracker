@@ -11,5 +11,5 @@ public interface DeveloperService {
     void deleteDeveloper(int id);
     DeveloperResponseDto updateDeveloper(int id,DeveloperRequestDto requestDto);
     DeveloperResponseDto getDeveloperById(int id);
-    List<DeveloperResponseDto> getAllDevelopers();
+    List<DeveloperResponseDto> getAllDevelopers(int pageNumber,String sortBy);
 }

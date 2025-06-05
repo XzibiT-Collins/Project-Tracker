@@ -47,9 +47,12 @@ public class TaskController {
     }
 
     @GetMapping
-    protected ResponseEntity<Iterable<TaskResponseDto>> getAllTasks(){
+    protected ResponseEntity<Iterable<TaskResponseDto>> getAllTasks(
+            @RequestParam(required = false, defaultValue = "title") String sortBy,
+            @RequestParam(required = false, defaultValue = "1") int pageNumber
+    ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(taskService.getAllTasks());
+                .body(taskService.getAllTasks(pageNumber,sortBy));
     }
 }

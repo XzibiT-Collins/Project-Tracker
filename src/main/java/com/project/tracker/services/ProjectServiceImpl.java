@@ -7,6 +7,10 @@ import com.project.tracker.exceptions.customExceptions.ProjectNotFoundException;
 import com.project.tracker.models.Project;
 import com.project.tracker.repositories.ProjectRepository;
 import com.project.tracker.services.serviceInterfaces.ProjectService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,8 +76,18 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectResponseDto> getAllProjects() {
-        List<Project> projects = projectRepository.findAll();
+    public List<ProjectResponseDto> getAllProjects(int pageNumber, String sortBy) {
+        //paginate by
+        int paginateBy = 10;
+
+        //Sorting param
+        Sort sort = Sort.by(sortBy);
+
+        //Pageable object
+        Pageable pageable = PageRequest.of(pageNumber, paginateBy, sort);
+
+        Page<Project> projects = projectRepository.findAll(pageable);
+
         return projects.stream()
                 .map(project -> objectMapper.
                         convertValue(project, ProjectResponseDto.class))

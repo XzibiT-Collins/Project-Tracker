@@ -11,5 +11,5 @@ public interface TaskService {
     void deleteTask(int id);
     TaskResponseDto updateTask(int id,TaskRequestDto requestDto);
     TaskResponseDto getTaskById(int id);
-    List<TaskResponseDto> getAllTasks();
+    List<TaskResponseDto> getAllTasks(int pageNumber,String sortBy);
 }
