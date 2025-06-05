@@ -1,5 +1,7 @@
 package com.project.tracker.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.tracker.statusEnum.StatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,9 +28,11 @@ public class Task {
 
     @ManyToOne(optional = true) //optional assignment to a Developer
     @JoinColumn(name = "developer_id")
+    @JsonBackReference(value = "developer-task")
     private Developer developer;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "project_id")
+    @JsonBackReference(value = "project-task")
     private Project project;
 }

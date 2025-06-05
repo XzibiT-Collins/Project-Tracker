@@ -14,7 +14,7 @@ public record TaskRequestDto(
         @Size(max = 500, message = "Description cannot be more than 500 characters.")
         String description,
 
-        @NotBlank(message = "Task must have a status.")
+        @NotNull(message = "Task must have a status.")
         StatusEnum status,
 
         @NotNull(message = "Task must have a due date.")

@@ -1,5 +1,7 @@
 package com.project.tracker.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.tracker.statusEnum.StatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,5 +28,6 @@ public class Project {
     private StatusEnum status;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "project-task")
     private List<Task> tasks;
 }

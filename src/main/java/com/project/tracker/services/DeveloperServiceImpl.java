@@ -80,7 +80,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public List<DeveloperResponseDto> getAllDevelopers(int pageNumber,String sortBy) {
+    public Page<DeveloperResponseDto> getAllDevelopers(int pageNumber,String sortBy) {
         //paginate by
         int paginateBy = 10;
 
@@ -92,10 +92,10 @@ public class DeveloperServiceImpl implements DeveloperService {
 
         Page<Developer> developers = developerRepository.findAll(pageable);
 
-        return developers.stream()
+        return developers
                 .map(developer -> objectMapper
                         .convertValue(developer,
                                 DeveloperResponseDto.class))
-                .collect(Collectors.toList());
+                ;
     }
 }

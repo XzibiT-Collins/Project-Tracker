@@ -76,7 +76,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectResponseDto> getAllProjects(int pageNumber, String sortBy) {
+    public Page<ProjectResponseDto> getAllProjects(int pageNumber, String sortBy) {
         //paginate by
         int paginateBy = 10;
 
@@ -87,10 +87,10 @@ public class ProjectServiceImpl implements ProjectService {
         Pageable pageable = PageRequest.of(pageNumber, paginateBy, sort);
 
         Page<Project> projects = projectRepository.findAll(pageable);
-
-        return projects.stream()
+        projects.forEach(System.out::println);
+        return projects
                 .map(project -> objectMapper.
                         convertValue(project, ProjectResponseDto.class))
-                .collect(Collectors.toList());
+                ;
     }
 }

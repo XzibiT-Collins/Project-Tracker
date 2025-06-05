@@ -3,7 +3,10 @@ package com.project.tracker.controllers;
 import com.project.tracker.dto.requestDto.DeveloperRequestDto;
 import com.project.tracker.dto.responseDto.DeveloperResponseDto;
 import com.project.tracker.services.serviceInterfaces.DeveloperService;
+import com.project.tracker.statusEnum.DeveloperSorting;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,12 +50,12 @@ public class DeveloperController {
     }
 
     @GetMapping
-    protected ResponseEntity<Iterable<DeveloperResponseDto>> getAllDevelopers(
-            @RequestParam(required = false, defaultValue = "name") String sortBy,
-            @RequestParam(required = false, defaultValue = "1") int pageNumber
+    protected ResponseEntity<Page<DeveloperResponseDto>> getAllDevelopers(
+            @RequestParam(required = false, defaultValue = "SORT_BY_ID") DeveloperSorting sortBy,
+            @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(developerService.getAllDevelopers(pageNumber,sortBy));
+                .body(developerService.getAllDevelopers(pageNumber,sortBy.getField()));
     }
 }
