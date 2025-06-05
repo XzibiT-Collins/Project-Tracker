@@ -2,7 +2,6 @@ package com.project.tracker.services.serviceInterfaces;
 
 import com.project.tracker.dto.requestDto.DeveloperRequestDto;
 import com.project.tracker.dto.responseDto.DeveloperResponseDto;
-import com.project.tracker.models.Developer;
 
 import java.util.List;
 
@@ -11,5 +10,5 @@ public interface DeveloperService {
     void deleteDeveloper(int id);
     DeveloperResponseDto updateDeveloper(int id,DeveloperRequestDto requestDto);
     DeveloperResponseDto getDeveloperById(int id);
-    List<DeveloperResponseDto> getAllDevelopers();
+    List<DeveloperResponseDto> getAllDevelopers(String sortBy);
 }
