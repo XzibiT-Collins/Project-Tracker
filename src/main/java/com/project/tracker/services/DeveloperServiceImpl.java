@@ -76,7 +76,7 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public List<DeveloperResponseDto> getAllDevelopers() {
+    public List<DeveloperResponseDto> getAllDevelopers(String sortBy) {
         List<Developer> developers = developerRepository.findAll();
         return developers.stream()
                 .map(developer -> objectMapper

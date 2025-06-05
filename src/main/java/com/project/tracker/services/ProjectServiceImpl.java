@@ -72,7 +72,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectResponseDto> getAllProjects() {
+    public List<ProjectResponseDto> getAllProjects(String sortBy) {
         List<Project> projects = projectRepository.findAll();
         return projects.stream()
                 .map(project -> objectMapper.

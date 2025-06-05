@@ -47,7 +47,9 @@ public class TaskController {
     }
 
     @GetMapping
-    protected ResponseEntity<Iterable<TaskResponseDto>> getAllTasks(){
+    protected ResponseEntity<Iterable<TaskResponseDto>> getAllTasks(
+            @RequestParam(required = false, defaultValue = "title") String sortBy
+    ){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(taskService.getAllTasks());
