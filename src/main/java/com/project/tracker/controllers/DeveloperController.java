@@ -48,9 +48,11 @@ public class DeveloperController {
 
     @GetMapping
     protected ResponseEntity<Iterable<DeveloperResponseDto>> getAllDevelopers(
-            @RequestParam(required = false, defaultValue = "name") String sortBy){
+            @RequestParam(required = false, defaultValue = "name") String sortBy,
+            @RequestParam(required = false, defaultValue = "1") int pageNumber
+    ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(developerService.getAllDevelopers(sortBy));
+                .body(developerService.getAllDevelopers(pageNumber,sortBy));
     }
 }

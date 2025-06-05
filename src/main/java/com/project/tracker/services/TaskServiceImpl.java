@@ -13,6 +13,10 @@ import com.project.tracker.repositories.DeveloperRepository;
 import com.project.tracker.repositories.ProjectRepository;
 import com.project.tracker.repositories.TaskRepository;
 import com.project.tracker.services.serviceInterfaces.TaskService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -115,8 +119,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskResponseDto> getAllTasks() {
-        List<Task> tasks = taskRepository.findAll();
+    public List<TaskResponseDto> getAllTasks(int pageNumber,String sortBy) {
+        int paginateBy = 10;
+        //sort
+        Sort sort = Sort.by(sortBy);
+        //paginator object
+        Pageable pageable = PageRequest.of(pageNumber, paginateBy,sort);
+        //fetch paginated data
+        Page<Task> tasks = taskRepository.findAll(pageable);
         return tasks.stream()
                 .map(task -> objectMapper.convertValue(task,TaskResponseDto.class))
                 .collect(Collectors.toList());

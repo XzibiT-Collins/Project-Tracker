@@ -7,6 +7,10 @@ import com.project.tracker.exceptions.customExceptions.DeveloperNotFoundExceptio
 import com.project.tracker.models.Developer;
 import com.project.tracker.repositories.DeveloperRepository;
 import com.project.tracker.services.serviceInterfaces.DeveloperService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -76,8 +80,18 @@ public class DeveloperServiceImpl implements DeveloperService {
     }
 
     @Override
-    public List<DeveloperResponseDto> getAllDevelopers(String sortBy) {
-        List<Developer> developers = developerRepository.findAll();
+    public List<DeveloperResponseDto> getAllDevelopers(int pageNumber,String sortBy) {
+        //paginate by
+        int paginateBy = 10;
+
+        //sort
+        Sort sort = Sort.by(sortBy);
+
+        //Pageable object
+        Pageable pageable = PageRequest.of(pageNumber, paginateBy, sort);
+
+        Page<Developer> developers = developerRepository.findAll(pageable);
+
         return developers.stream()
                 .map(developer -> objectMapper
                         .convertValue(developer,

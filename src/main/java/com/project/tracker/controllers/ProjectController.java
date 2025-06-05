@@ -48,10 +48,11 @@ public class ProjectController {
 
     @GetMapping
     protected ResponseEntity<Iterable<ProjectResponseDto>> getAllProjects(
-            @RequestParam(required = false, defaultValue = "projectName") String sortBy
+            @RequestParam(required = false, defaultValue = "projectName") String sortBy,
+            @RequestParam(required = false, defaultValue = "1") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(projectService.getAllProjects(sortBy));
+                .body(projectService.getAllProjects(pageNumber,sortBy));
     }
 }
