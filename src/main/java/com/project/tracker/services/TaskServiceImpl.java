@@ -1,17 +1,20 @@
 package com.project.tracker.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.tracker.dto.requestDto.TaskRequestDto;
 import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.exceptions.customExceptions.DeveloperNotFoundException;
 import com.project.tracker.exceptions.customExceptions.ProjectNotFoundException;
 import com.project.tracker.exceptions.customExceptions.TaskNotFoundException;
+import com.project.tracker.models.AuditLog;
 import com.project.tracker.models.Developer;
 import com.project.tracker.models.Project;
 import com.project.tracker.models.Task;
 import com.project.tracker.repositories.DeveloperRepository;
 import com.project.tracker.repositories.ProjectRepository;
 import com.project.tracker.repositories.TaskRepository;
+import com.project.tracker.services.serviceInterfaces.AuditLogService;
 import com.project.tracker.services.serviceInterfaces.TaskService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,30 +33,31 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final DeveloperRepository developerRepository;
     private final ProjectRepository projectRepository;
+    private final AuditLogService auditLogService;
 
     public TaskServiceImpl(TaskRepository taskRepository,
                            ObjectMapper objectMapper,
                            DeveloperRepository developerRepository,
-                           ProjectRepository projectRepository) {
+                           ProjectRepository projectRepository,
+                           AuditLogService auditLogService) {
         this.taskRepository = taskRepository;
         this.objectMapper = objectMapper;
         this.developerRepository = developerRepository;
         this.projectRepository = projectRepository;
+        this.auditLogService = auditLogService;
     }
 
     @Override
     public TaskResponseDto addTask(TaskRequestDto requestDto) {
-        //fetch the developer to be assigned to the task
         Developer developer = developerRepository
                 .findById(requestDto.developerId())
-                .orElseThrow(()-> new DeveloperNotFoundException
-                        ("Developer with ID: "+ requestDto.developerId() + "not found"));
+                .orElseThrow(() -> new DeveloperNotFoundException(
+                        "Developer with ID: " + requestDto.developerId() + " not found"));
 
-        //Fetch the project to which the task is assigned to
         Project project = projectRepository
                 .findById(requestDto.projectId())
-                .orElseThrow(()-> new ProjectNotFoundException
-                        ("Project with ID: "+requestDto.projectId()+" not found"));
+                .orElseThrow(() -> new ProjectNotFoundException(
+                        "Project with ID: " + requestDto.projectId() + " not found"));
 
         Task task = Task.builder()
                 .title(requestDto.title())
@@ -62,72 +68,98 @@ public class TaskServiceImpl implements TaskService {
                 .project(project)
                 .build();
 
-        return objectMapper
-                .convertValue(taskRepository.save(task),
-                        TaskResponseDto.class);
+        Task savedTask = taskRepository.save(task);
+        logAudit("Create Task", String.valueOf(savedTask.getId()), savedTask.getTitle(), savedTask);
+
+        return objectMapper.convertValue(savedTask, TaskResponseDto.class);
     }
 
     @Override
     public void deleteTask(int id) {
-        //Check if the task exists
-        if(!taskRepository.existsById(id)){
-           throw new TaskNotFoundException("Task with ID: "+id+" not found");
-        }
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task with ID: " + id + " not found"));
 
         taskRepository.deleteById(id);
+        logAudit("Delete Task", String.valueOf(task.getId()), task.getTitle(), task);
     }
 
     @Override
-    public TaskResponseDto updateTask(int id,TaskRequestDto requestDto) {
-        //check if the task to be updated exists
-        if(!taskRepository.existsById(id)){
-            throw new TaskNotFoundException("Task with ID: "+id+" not found");
-        }
+    public TaskResponseDto updateTask(int id, TaskRequestDto requestDto) {
+        Task existingTask = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task with ID: " + id + " not found"));
 
-        //Fetch the project to which the task is assigned to
-        Project project = projectRepository
-                .findById(requestDto.projectId())
-                .orElseThrow(()-> new ProjectNotFoundException
-                        ("Project with ID: "+requestDto.projectId()+" not found"));
+        Developer developer = developerRepository.findById(requestDto.developerId())
+                .orElseThrow(() -> new DeveloperNotFoundException("Developer with ID: " + requestDto.developerId() + " not found"));
 
-        //check if the task project is being updated
-        if(project.getId() != requestDto.projectId()){
-            project = projectRepository
-                    .findById(requestDto.projectId())
-                    .orElseThrow(()-> new ProjectNotFoundException
-                            ("The project you are trying to update to does not exist"));
-        }
+        Project project = projectRepository.findById(requestDto.projectId())
+                .orElseThrow(() -> new ProjectNotFoundException("Project with ID: " + requestDto.projectId() + " not found"));
 
         Task updatedTask = Task.builder()
                 .id(id)
                 .title(requestDto.title())
                 .description(requestDto.description())
+                .status(requestDto.status())
+                .dueDate(requestDto.dueDate())
+                .developer(developer)
                 .project(project)
                 .build();
-        return objectMapper.
-                convertValue(taskRepository.save(updatedTask),
-                        TaskResponseDto.class);
+
+        Task savedTask = taskRepository.save(updatedTask);
+        logAudit("Update Task", String.valueOf(savedTask.getId()), savedTask.getTitle(), savedTask);
+
+        return objectMapper.convertValue(savedTask, TaskResponseDto.class);
     }
 
     @Override
     public TaskResponseDto getTaskById(int id) {
-        Task task = taskRepository
-                .findById(id)
-                .orElseThrow(()-> new TaskNotFoundException
-                        ("Task with ID: "+id+" not found"));
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task with ID: " + id + " not found"));
+
+        logAudit("Get Task By ID", String.valueOf(task.getId()), task.getTitle(), task);
+
         return objectMapper.convertValue(task, TaskResponseDto.class);
     }
 
     @Override
-    public Page<TaskResponseDto> getAllTasks(int pageNumber,String sortBy) {
+    public Page<TaskResponseDto> getAllTasks(int pageNumber, String sortBy) {
         int paginateBy = 10;
-        //sort
         Sort sort = Sort.by(sortBy);
-        //paginator object
-        Pageable pageable = PageRequest.of(pageNumber, paginateBy,sort);
-        //fetch paginated data
+        Pageable pageable = PageRequest.of(pageNumber, paginateBy, sort);
+
         Page<Task> tasks = taskRepository.findAll(pageable);
-        return tasks
-                .map(task -> objectMapper.convertValue(task,TaskResponseDto.class));
+
+        logAudit("Get All Tasks", "PAGE_" + pageNumber, "None", "Task");
+
+        return tasks.map(task -> objectMapper.convertValue(task, TaskResponseDto.class));
+    }
+
+    @Override
+    public Page<TaskResponseDto> getOverdueTasks(int pageNumber, String sortBy) {
+        int paginateBy = 10;
+        Sort sort = Sort.by(sortBy);
+        Pageable pageable = PageRequest.of(pageNumber, paginateBy, sort);
+
+        Page<Task> tasks = taskRepository.findAllOverdueTasks(Date.valueOf(LocalDate.now()),pageable);
+
+        logAudit("Get All Overdue Tasks", "PAGE_" + pageNumber, "None", "Task");
+
+        return tasks.map(task -> objectMapper.convertValue(task, TaskResponseDto.class));
+    }
+
+    private void logAudit(String actionType, String entityId, String actorName, Object entity) {
+        String payload;
+        try {
+            payload = objectMapper.writeValueAsString(entity);
+        } catch (JsonProcessingException e) {
+            payload = "Could not serialize payload: " + e.getMessage();
+        }
+
+        auditLogService.addAuditLog(AuditLog.builder()
+                .actionType(actionType)
+                .entityId(entityId)
+                .actorName(actorName)
+                .payload(payload)
+                .timestamp(Date.valueOf(LocalDate.now()))
+                .build());
     }
 }

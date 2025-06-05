@@ -36,7 +36,7 @@ public class AuditLogServiceImpl implements AuditLogService {
         //pageable
         Pageable pageableObj = PageRequest.of(pageNumber, paginateBy, sort);
 
-        Page<AuditLog> auditLogs = auditLogRepository.getAllAuditLogs(pageableObj);
+        Page<AuditLog> auditLogs = auditLogRepository.findAll(pageableObj);
 
         return auditLogs
                 .map(auditLog -> objectMapper.convertValue
