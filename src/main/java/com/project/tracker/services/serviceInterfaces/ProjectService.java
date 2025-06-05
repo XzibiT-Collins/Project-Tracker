@@ -2,7 +2,6 @@ package com.project.tracker.services.serviceInterfaces;
 
 import com.project.tracker.dto.requestDto.ProjectRequestDto;
 import com.project.tracker.dto.responseDto.ProjectResponseDto;
-import com.project.tracker.models.Project;
 
 import java.util.List;
 
