@@ -1,6 +1,6 @@
 package com.project.tracker.dto.responseDto;
 
-import com.project.tracker.statusEnum.StatusEnum;
+import com.project.tracker.sortingEnums.StatusEnum;
 
 public record TaskResponseDto(
         int id,

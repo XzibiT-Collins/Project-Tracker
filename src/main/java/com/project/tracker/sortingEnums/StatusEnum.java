@@ -1,4 +1,4 @@
-package com.project.tracker.statusEnum;
+package com.project.tracker.sortingEnums;
 
 import lombok.Getter;
 

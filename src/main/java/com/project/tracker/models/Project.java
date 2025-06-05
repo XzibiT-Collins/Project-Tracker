@@ -1,8 +1,7 @@
 package com.project.tracker.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.project.tracker.statusEnum.StatusEnum;
+import com.project.tracker.sortingEnums.StatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 

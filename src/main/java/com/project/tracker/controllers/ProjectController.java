@@ -3,7 +3,7 @@ package com.project.tracker.controllers;
 import com.project.tracker.dto.requestDto.ProjectRequestDto;
 import com.project.tracker.dto.responseDto.ProjectResponseDto;
 import com.project.tracker.services.serviceInterfaces.ProjectService;
-import com.project.tracker.statusEnum.ProjectSorting;
+import com.project.tracker.sortingEnums.ProjectSorting;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

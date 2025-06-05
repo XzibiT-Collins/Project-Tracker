@@ -13,4 +13,5 @@ public interface TaskService {
     TaskResponseDto updateTask(int id,TaskRequestDto requestDto);
     TaskResponseDto getTaskById(int id);
     Page<TaskResponseDto> getAllTasks(int pageNumber, String sortBy);
+    Page<TaskResponseDto> getOverdueTasks(int pageNumber, String sortBy);
 }

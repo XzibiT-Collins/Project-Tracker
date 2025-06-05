@@ -3,7 +3,7 @@ package com.project.tracker.controllers;
 import com.project.tracker.dto.requestDto.TaskRequestDto;
 import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.services.serviceInterfaces.TaskService;
-import com.project.tracker.statusEnum.TaskSorting;
+import com.project.tracker.sortingEnums.TaskSorting;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -56,5 +56,15 @@ public class TaskController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(taskService.getAllTasks(pageNumber,sortBy.getField()));
+    }
+
+    @GetMapping("/overdueTasks")
+    protected ResponseEntity<Page<TaskResponseDto>> getAllOverdueTasks(
+            @RequestParam(required = false, defaultValue = "SORT_BY_TITLE") TaskSorting sortBy,
+            @RequestParam(required = false, defaultValue = "0") int pageNumber
+    ){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(taskService.getOverdueTasks(pageNumber,sortBy.getField()));
     }
 }
