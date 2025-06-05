@@ -1,5 +1,7 @@
 package com.project.tracker.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,5 +23,6 @@ public class Developer {
     private Set<String> skills;
 
     @OneToMany(mappedBy = "developer")
+    @JsonManagedReference(value = "developer-task")
     private List<Task> tasks;
 }

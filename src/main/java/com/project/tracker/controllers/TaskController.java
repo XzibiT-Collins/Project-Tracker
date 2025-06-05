@@ -3,7 +3,9 @@ package com.project.tracker.controllers;
 import com.project.tracker.dto.requestDto.TaskRequestDto;
 import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.services.serviceInterfaces.TaskService;
+import com.project.tracker.statusEnum.TaskSorting;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,12 +49,12 @@ public class TaskController {
     }
 
     @GetMapping
-    protected ResponseEntity<Iterable<TaskResponseDto>> getAllTasks(
-            @RequestParam(required = false, defaultValue = "title") String sortBy,
-            @RequestParam(required = false, defaultValue = "1") int pageNumber
+    protected ResponseEntity<Page<TaskResponseDto>> getAllTasks(
+            @RequestParam(required = false, defaultValue = "SORT_BY_TITLE") TaskSorting sortBy,
+            @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(taskService.getAllTasks(pageNumber,sortBy));
+                .body(taskService.getAllTasks(pageNumber,sortBy.getField()));
     }
 }

@@ -3,7 +3,9 @@ package com.project.tracker.controllers;
 import com.project.tracker.dto.requestDto.ProjectRequestDto;
 import com.project.tracker.dto.responseDto.ProjectResponseDto;
 import com.project.tracker.services.serviceInterfaces.ProjectService;
+import com.project.tracker.statusEnum.ProjectSorting;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,12 +49,12 @@ public class ProjectController {
     }
 
     @GetMapping
-    protected ResponseEntity<Iterable<ProjectResponseDto>> getAllProjects(
-            @RequestParam(required = false, defaultValue = "projectName") String sortBy,
-            @RequestParam(required = false, defaultValue = "1") int pageNumber
+    protected ResponseEntity<Page<ProjectResponseDto>> getAllProjects(
+            @RequestParam(required = false, defaultValue = "SORT_BY_ID") ProjectSorting sortBy,
+            @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(projectService.getAllProjects(pageNumber,sortBy));
+                .body(projectService.getAllProjects(pageNumber,sortBy.getField()));
     }
 }

@@ -119,7 +119,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskResponseDto> getAllTasks(int pageNumber,String sortBy) {
+    public Page<TaskResponseDto> getAllTasks(int pageNumber,String sortBy) {
         int paginateBy = 10;
         //sort
         Sort sort = Sort.by(sortBy);
@@ -127,8 +127,7 @@ public class TaskServiceImpl implements TaskService {
         Pageable pageable = PageRequest.of(pageNumber, paginateBy,sort);
         //fetch paginated data
         Page<Task> tasks = taskRepository.findAll(pageable);
-        return tasks.stream()
-                .map(task -> objectMapper.convertValue(task,TaskResponseDto.class))
-                .collect(Collectors.toList());
+        return tasks
+                .map(task -> objectMapper.convertValue(task,TaskResponseDto.class));
     }
 }

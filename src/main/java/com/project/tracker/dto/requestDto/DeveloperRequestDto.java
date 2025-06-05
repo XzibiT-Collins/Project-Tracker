@@ -4,6 +4,7 @@ import com.project.tracker.models.Task;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,6 @@ public record DeveloperRequestDto(
     @Email(message = "Please provide a valid email.")
     String email,
 
-    @NotBlank(message = "Please add a skill.")
+    @NotEmpty(message = "Please add a skill.")
     Set<String> skills
 ) {}

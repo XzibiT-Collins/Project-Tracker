@@ -12,11 +12,12 @@ public record ProjectRequestDto(
     String projectName,
 
     @Size(max = 500, message = "Description cannot be more than 500 characters")
+    @NotBlank(message = "Project must have a description.")
     String description,
 
     @NotNull(message = "Project must have a deadline.")
     Date deadline,
 
-    @NotBlank(message = "Project must have a status.")
+    @NotNull(message = "Project must have a status.")
     StatusEnum status
 ) {}
