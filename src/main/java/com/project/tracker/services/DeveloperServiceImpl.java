@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DeveloperServiceImpl implements DeveloperService {
@@ -97,6 +95,17 @@ public class DeveloperServiceImpl implements DeveloperService {
 
         logAudit("Get all Developers" + paginateBy, "PAGE_"+pageNumber, "None", "Developer");
         return developers.map(developer -> objectMapper.convertValue(developer, DeveloperResponseDto.class));
+    }
+
+    @Override
+    public Page<DeveloperResponseDto> getTopDevelopers() {
+        int size = 5;
+        Pageable pageable = PageRequest.of(0, size);
+        Page<Developer> top5Developers = developerRepository.findTop5ByOrderByTasksCountDesc(pageable);
+
+        logAudit("Get Top 5 Developers", "PAGE_"+0, "None", "Developer");
+        return top5Developers
+                .map(developer -> objectMapper.convertValue(developer, DeveloperResponseDto.class));
     }
 
     private void logAudit(String actionType, String entityId, String actorName, Object entity) {

@@ -12,4 +12,5 @@ public interface ProjectService {
     ProjectResponseDto updateProject(int id,ProjectRequestDto requestDto);
     ProjectResponseDto getProjectById(int id);
     Page<ProjectResponseDto> getAllProjects(int pageNumber, String sortBy);
+    Page<ProjectResponseDto> getAllProjectsByTasksIsEmpty(int pageNumber, String sortBy);
 }

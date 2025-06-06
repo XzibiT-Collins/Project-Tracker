@@ -3,6 +3,7 @@ package com.project.tracker.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.tracker.dto.requestDto.TaskRequestDto;
+import com.project.tracker.dto.responseDto.StatusCountDto;
 import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.exceptions.customExceptions.DeveloperNotFoundException;
 import com.project.tracker.exceptions.customExceptions.ProjectNotFoundException;
@@ -15,6 +16,7 @@ import com.project.tracker.repositories.DeveloperRepository;
 import com.project.tracker.repositories.ProjectRepository;
 import com.project.tracker.repositories.TaskRepository;
 import com.project.tracker.services.serviceInterfaces.AuditLogService;
+import com.project.tracker.services.serviceInterfaces.StatusCountProjection;
 import com.project.tracker.services.serviceInterfaces.TaskService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -144,6 +146,16 @@ public class TaskServiceImpl implements TaskService {
         logAudit("Get All Overdue Tasks", "PAGE_" + pageNumber, "None", "Task");
 
         return tasks.map(task -> objectMapper.convertValue(task, TaskResponseDto.class));
+    }
+
+    @Override
+    public List<StatusCountDto> countTasksGroupedByStatus() {
+        List<StatusCountProjection> statusCountProjections = taskRepository.countTasksGroupedByStatus();
+
+        return statusCountProjections
+                .stream()
+                .map(statusCount -> objectMapper.convertValue(statusCount, StatusCountDto.class))
+                .collect(Collectors.toList());
     }
 
     private void logAudit(String actionType, String entityId, String actorName, Object entity) {

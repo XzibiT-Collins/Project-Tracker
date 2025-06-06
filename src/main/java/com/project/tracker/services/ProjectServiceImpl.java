@@ -102,9 +102,22 @@ public class ProjectServiceImpl implements ProjectService {
         Page<Project> projects = projectRepository.findAll(pageable);
 
         // Optional: log general access (not per item) if needed
-        logAudit("Get All Projects", "PAGE_" + pageNumber, "System", "Project");
+        logAudit("Get All Projects", "PAGE_" + pageNumber, "None", "Project");
 
         return projects.map(project -> objectMapper.convertValue(project, ProjectResponseDto.class));
+    }
+
+    @Override
+    public Page<ProjectResponseDto> getAllProjectsByTasksIsEmpty(int pageNumber, String sortBy) {
+        int paginateBy = 10;
+        Sort sort = Sort.by(sortBy);
+        Pageable pageable = PageRequest.of(pageNumber, paginateBy, sort);
+
+        Page<Project> projects = projectRepository.findAllByTasksIsEmpty(pageable);
+
+        logAudit("Get Projects Without Tasks","PAGE_"+pageNumber,"None","Project");
+        return projects
+                .map(project -> objectMapper.convertValue(project, ProjectResponseDto.class));
     }
 
     private void logAudit(String actionType, String entityId, String actorName, Object entity) {

@@ -1,6 +1,7 @@
 package com.project.tracker.controllers;
 
 import com.project.tracker.dto.requestDto.TaskRequestDto;
+import com.project.tracker.dto.responseDto.StatusCountDto;
 import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.services.serviceInterfaces.TaskService;
 import com.project.tracker.sortingEnums.TaskSorting;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/tasks")
 public class TaskController {
@@ -21,7 +24,7 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @CacheEvict(value = {"tasks","overdueTasks"}, allEntries = true)
+    @CacheEvict(value = {"tasks","overdueTasks","taskCount"}, allEntries = true)
     @PostMapping("/create")
     public ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequestDto request){
         return ResponseEntity
@@ -29,7 +32,7 @@ public class TaskController {
                 .body(taskService.addTask(request));
     }
 
-    @CacheEvict(value = {"tasks","overdueTasks"}, allEntries = true)
+    @CacheEvict(value = {"tasks","overdueTasks","taskCount"}, allEntries = true)
     @DeleteMapping("delete/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable int id){
         taskService.deleteTask(id);
@@ -38,7 +41,7 @@ public class TaskController {
                 .body("Task Deleted Successfully");
     }
 
-    @CacheEvict(value = {"tasks","overdueTasks"}, allEntries = true)
+    @CacheEvict(value = {"tasks","overdueTasks","taskCount"}, allEntries = true)
     @PutMapping("update/{id}")
     public ResponseEntity<TaskResponseDto> updateTask(@PathVariable int id, @Valid @RequestBody TaskRequestDto request ){
         return ResponseEntity
@@ -74,5 +77,13 @@ public class TaskController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(taskService.getOverdueTasks(pageNumber,sortBy.getField()));
+    }
+
+    @Cacheable(value = "taskCount")
+    @GetMapping("/statusCount")
+    public ResponseEntity<List<StatusCountDto>> countTasksGroupedByStatus(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(taskService.countTasksGroupedByStatus());
     }
 }

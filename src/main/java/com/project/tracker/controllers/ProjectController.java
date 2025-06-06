@@ -64,4 +64,15 @@ public class ProjectController {
                 .status(HttpStatus.OK)
                 .body(projectService.getAllProjects(pageNumber,sortBy.getField()));
     }
+
+    @Cacheable(value = "projectsWithoutTasks")
+    @GetMapping("/withoutTasks")
+    public ResponseEntity<Page<ProjectResponseDto>> getProjectsWithoutTasks(
+            @RequestParam(required = false, defaultValue = "SORT_BY_ID") ProjectSorting sortBy,
+            @RequestParam(required = false, defaultValue = "0") int pageNumber
+    ){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(projectService.getAllProjectsByTasksIsEmpty(pageNumber,sortBy.getField()));
+    }
 }

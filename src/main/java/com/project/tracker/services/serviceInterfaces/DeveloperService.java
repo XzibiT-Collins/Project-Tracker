@@ -12,4 +12,5 @@ public interface DeveloperService {
     DeveloperResponseDto updateDeveloper(int id,DeveloperRequestDto requestDto);
     DeveloperResponseDto getDeveloperById(int id);
     Page<DeveloperResponseDto> getAllDevelopers(int pageNumber, String sortBy);
+    Page<DeveloperResponseDto> getTopDevelopers();
 }
