@@ -4,9 +4,11 @@ import com.project.tracker.sortingEnums.StatusEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 import java.sql.Date;
 
+@Builder
 public record ProjectRequestDto(
     @NotBlank(message = "Project name must not be blank.")
     String projectName,
