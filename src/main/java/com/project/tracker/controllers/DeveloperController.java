@@ -23,7 +23,7 @@ public class DeveloperController {
     }
 
     @PostMapping("/create")
-    @CacheEvict(value = "developers", allEntries = true)
+    @CacheEvict(value = {"developers","top5Developers"}, allEntries = true)
     public ResponseEntity<DeveloperResponseDto> createDeveloper(@Valid @RequestBody DeveloperRequestDto request){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -31,7 +31,7 @@ public class DeveloperController {
     }
 
     @DeleteMapping("delete/{id}")
-    @CacheEvict(value = "developers", allEntries = true)
+    @CacheEvict(value = {"developers","top5Developers"}, allEntries = true)
     public ResponseEntity<String> deleteDeveloper(@PathVariable int id){
         developerService.deleteDeveloper(id);
         return ResponseEntity
@@ -40,7 +40,7 @@ public class DeveloperController {
     }
 
     @PutMapping("update/{id}")
-    @CacheEvict(value = "developers", allEntries = true)
+    @CacheEvict(value = {"developers","top5Developers"}, allEntries = true)
     public ResponseEntity<DeveloperResponseDto> updateDeveloper(@PathVariable int id, @Valid @RequestBody DeveloperRequestDto request ){
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -64,5 +64,14 @@ public class DeveloperController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(developerService.getAllDevelopers(pageNumber,sortBy.getField()));
+    }
+
+    @Cacheable(value = "top5Developers")
+    @GetMapping("/top5Developers")
+    public ResponseEntity<Page<DeveloperResponseDto>> getTopDevelopers(){
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(developerService.getTopDevelopers());
     }
 }

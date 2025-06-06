@@ -1,6 +1,7 @@
 package com.project.tracker.services.serviceInterfaces;
 
 import com.project.tracker.dto.requestDto.TaskRequestDto;
+import com.project.tracker.dto.responseDto.StatusCountDto;
 import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.models.Task;
 import org.springframework.data.domain.Page;
@@ -14,4 +15,5 @@ public interface TaskService {
     TaskResponseDto getTaskById(int id);
     Page<TaskResponseDto> getAllTasks(int pageNumber, String sortBy);
     Page<TaskResponseDto> getOverdueTasks(int pageNumber, String sortBy);
+    List<StatusCountDto> countTasksGroupedByStatus();
 }

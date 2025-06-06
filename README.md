@@ -174,13 +174,14 @@ graph TB
 ## **🔌 API Endpoints**
 
 ### **📁 Project Endpoints**
-| Method | Endpoint | Description | Parameters |
-|--------|----------|-------------|------------|
-| `POST` | `/api/v1/projects/create` | Create new project | Request body |
-| `PUT` | `/api/v1/projects/update/{id}` | Update existing project | `id` (path) |
-| `DELETE` | `/api/v1/projects/delete/{id}` | Delete project | `id` (path) |
-| `GET` | `/api/v1/projects` | Get all projects | `sortBy` (query) |
-| `GET` | `/api/v1/projects/{id}` | Get project by ID | `id` (path) |
+| Method   | Endpoint                        | Description                    | Parameters       |
+|----------|---------------------------------|--------------------------------|------------------|
+| `POST`   | `/api/v1/projects/create`       | Create new project             | Request body     |
+| `PUT`    | `/api/v1/projects/update/{id}`  | Update existing project        | `id` (path)      |
+| `DELETE` | `/api/v1/projects/delete/{id}`  | Delete project                 | `id` (path)      |
+| `GET`    | `/api/v1/projects`              | Get all projects               | `sortBy` (query) |
+| `GET`    | `/api/v1/projects/withoutTasks` | Get all projects without tasks | `sortBy` (query) |
+| `GET`    | `/api/v1/projects/{id}`         | Get project by ID              | `id` (path)      |
 
 **Sorting Options:**
 - `SORT_BY_ID` (Default)
@@ -189,27 +190,29 @@ graph TB
 - `SORT_BY_STATUS`
 
 ### **👨‍💻 Developer Endpoints**
-| Method | Endpoint | Description | Parameters |
-|--------|----------|-------------|------------|
-| `POST` | `/api/v1/developers/create` | Create new developer | Request body |
-| `PUT` | `/api/v1/developers/update/{id}` | Update existing developer | `id` (path) |
-| `DELETE` | `/api/v1/developers/delete/{id}` | Delete developer | `id` (path) |
-| `GET` | `/api/v1/developers` | Get all developers | `sortBy` (query) |
-| `GET` | `/api/v1/developers/{id}` | Get developer by ID | `id` (path) |
+| Method   | Endpoint                            | Description                         | Parameters       |
+|----------|-------------------------------------|-------------------------------------|------------------|
+| `POST`   | `/api/v1/developers/create`         | Create new developer                | Request body     |
+| `PUT`    | `/api/v1/developers/update/{id}`    | Update existing developer           | `id` (path)      |
+| `DELETE` | `/api/v1/developers/delete/{id}`    | Delete developer                    | `id` (path)      |
+| `GET`    | `/api/v1/developers`                | Get all developers                  | `sortBy` (query) |
+| `GET`    | `/api/v1/developers/{id}`           | Get developer by ID                 | `id` (path)      |
+| `GET`    | `/api/v1/developers/top5Developers` | Get top 5 developer with most tasks | `none`           |
 
 **Sorting Options:**
 - `SORT_BY_ID` (Default)
 - `SORT_BY_NAME`
 
 ### **📋 Task Endpoints**
-| Method | Endpoint | Description | Parameters |
-|--------|----------|-------------|------------|
-| `POST` | `/api/v1/tasks/create` | Create new task | Request body |
-| `PUT` | `/api/v1/tasks/update/{id}` | Update existing task | `id` (path) |
-| `DELETE` | `/api/v1/tasks/delete/{id}` | Delete task | `id` (path) |
-| `GET` | `/api/v1/tasks` | Get all tasks | `sortBy` (query) |
-| `GET` | `/api/v1/tasks/overdueTasks` | Get overdue tasks | `sortBy` (query) |
-| `GET` | `/api/v1/tasks/{id}` | Get task by ID | `id` (path) |
+| Method   | Endpoint                     | Description              | Parameters       |
+|----------|------------------------------|--------------------------|------------------|
+| `POST`   | `/api/v1/tasks/create`       | Create new task          | Request body     |
+| `PUT`    | `/api/v1/tasks/update/{id}`  | Update existing task     | `id` (path)      |
+| `DELETE` | `/api/v1/tasks/delete/{id}`  | Delete task              | `id` (path)      |
+| `GET`    | `/api/v1/tasks`              | Get all tasks            | `sortBy` (query) |
+| `GET`    | `/api/v1/tasks/overdueTasks` | Get overdue tasks        | `sortBy` (query) |
+| `GET`    | `/api/v1/tasks/{id}`         | Get task by ID           | `id` (path)      |
+| `GET`    | `/api/v1/tasks/statusCount`  | Get task count by status | `none`           |
 
 **Sorting Options:**
 - `SORT_BY_TITLE` (Default)
