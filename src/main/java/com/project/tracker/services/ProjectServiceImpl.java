@@ -94,6 +94,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page<ProjectResponseDto> getAllProjects(int pageNumber, String sortBy) {
+        System.out.println("Fetching All Task from db");
         int paginateBy = 10;
         Sort sort = Sort.by(sortBy);
         Pageable pageable = PageRequest.of(pageNumber, paginateBy, sort);
@@ -101,7 +102,7 @@ public class ProjectServiceImpl implements ProjectService {
         Page<Project> projects = projectRepository.findAll(pageable);
 
         // Optional: log general access (not per item) if needed
-        logAudit("Get All Projects", "PAGE_" + pageNumber, "None", "Project");
+        logAudit("Get All Projects", "PAGE_" + pageNumber, "System", "Project");
 
         return projects.map(project -> objectMapper.convertValue(project, ProjectResponseDto.class));
     }
