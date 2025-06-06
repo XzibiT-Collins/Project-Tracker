@@ -5,6 +5,8 @@ import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.services.serviceInterfaces.TaskService;
 import com.project.tracker.sortingEnums.TaskSorting;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,37 +21,42 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    @CacheEvict(value = {"tasks","overdueTasks"}, allEntries = true)
     @PostMapping("/create")
-    protected ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequestDto request){
+    public ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequestDto request){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(taskService.addTask(request));
     }
 
+    @CacheEvict(value = {"tasks","overdueTasks"}, allEntries = true)
     @DeleteMapping("delete/{id}")
-    protected ResponseEntity<String> deleteTask(@PathVariable int id){
+    public ResponseEntity<String> deleteTask(@PathVariable int id){
         taskService.deleteTask(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Task Deleted Successfully");
     }
 
+    @CacheEvict(value = {"tasks","overdueTasks"}, allEntries = true)
     @PutMapping("update/{id}")
-    protected ResponseEntity<TaskResponseDto> updateTask(@PathVariable int id, @Valid @RequestBody TaskRequestDto request ){
+    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable int id, @Valid @RequestBody TaskRequestDto request ){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(taskService.updateTask(id,request));
     }
 
+    @Cacheable(value = "tasks", key = "#id")
     @GetMapping("/{id}")
-    protected ResponseEntity<TaskResponseDto> getTask(@PathVariable int id){
+    public ResponseEntity<TaskResponseDto> getTask(@PathVariable int id){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(taskService.getTaskById(id));
     }
 
+    @Cacheable(value = "tasks", key = "T(java.util.Objects).hash(#pageNumber, #sortBy)")
     @GetMapping
-    protected ResponseEntity<Page<TaskResponseDto>> getAllTasks(
+    public ResponseEntity<Page<TaskResponseDto>> getAllTasks(
             @RequestParam(required = false, defaultValue = "SORT_BY_TITLE") TaskSorting sortBy,
             @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
@@ -58,8 +65,9 @@ public class TaskController {
                 .body(taskService.getAllTasks(pageNumber,sortBy.getField()));
     }
 
+    @Cacheable(value = "overdueTasks", key = "T(java.util.Objects).hash(#pageNumber, #sortBy)")
     @GetMapping("/overdueTasks")
-    protected ResponseEntity<Page<TaskResponseDto>> getAllOverdueTasks(
+    public ResponseEntity<Page<TaskResponseDto>> getAllOverdueTasks(
             @RequestParam(required = false, defaultValue = "SORT_BY_TITLE") TaskSorting sortBy,
             @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){

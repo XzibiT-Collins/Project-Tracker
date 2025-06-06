@@ -5,6 +5,8 @@ import com.project.tracker.dto.responseDto.ProjectResponseDto;
 import com.project.tracker.services.serviceInterfaces.ProjectService;
 import com.project.tracker.sortingEnums.ProjectSorting;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +22,16 @@ public class ProjectController {
     }
 
     @PostMapping("/create")
-    protected ResponseEntity<ProjectResponseDto> createProject(@Valid @RequestBody ProjectRequestDto request){
+    @CacheEvict(value = "projects", allEntries = true)
+    public ResponseEntity<ProjectResponseDto> createProject(@Valid @RequestBody ProjectRequestDto request){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(projectService.addProject(request));
     }
 
     @DeleteMapping("delete/{id}")
-    protected ResponseEntity<String> deleteProject(@PathVariable int id){
+    @CacheEvict(value = "projects", allEntries = true)
+    public ResponseEntity<String> deleteProject(@PathVariable int id){
         projectService.deleteProject(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -35,21 +39,24 @@ public class ProjectController {
     }
 
     @PutMapping("update/{id}")
-    protected ResponseEntity<ProjectResponseDto> updateProject(@PathVariable int id, @Valid @RequestBody ProjectRequestDto request ){
+    @CacheEvict(value = "projects", allEntries = true)
+    public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable int id, @Valid @RequestBody ProjectRequestDto request ){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(projectService.updateProject(id,request));
     }
 
     @GetMapping("/{id}")
-    protected ResponseEntity<ProjectResponseDto> getProject(@PathVariable int id){
+    @Cacheable(value = "projects", key = "#id")
+    public ResponseEntity<ProjectResponseDto> getProject(@PathVariable int id){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(projectService.getProjectById(id));
     }
 
     @GetMapping
-    protected ResponseEntity<Page<ProjectResponseDto>> getAllProjects(
+    @Cacheable(value = "projects", key = "T(java.util.Objects).hash(#pageNumber, #sortBy)")
+    public ResponseEntity<Page<ProjectResponseDto>> getAllProjects(
             @RequestParam(required = false, defaultValue = "SORT_BY_ID") ProjectSorting sortBy,
             @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
