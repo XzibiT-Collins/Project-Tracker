@@ -20,7 +20,7 @@ public record TaskRequestDto(
         @NotNull(message = "Task must have a due date.")
         Date dueDate,
 
-        int developerId,
+        int userId,
 
         @NotNull(message = "Task must belong to a project.")
         int projectId

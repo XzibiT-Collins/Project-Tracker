@@ -25,10 +25,10 @@ public class Task {
 
     private Date dueDate;
 
-    @ManyToOne(optional = true) //optional assignment to a Developer
-    @JoinColumn(name = "developer_id")
-    @JsonBackReference(value = "developer-task")
-    private Developer developer;
+    @ManyToOne(optional = true) //optional assignment to a Users
+    @JoinColumn(name = "users_id")
+    @JsonBackReference(value = "users-task")
+    private Users users;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "project_id")

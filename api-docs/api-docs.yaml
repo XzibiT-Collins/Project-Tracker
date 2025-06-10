@@ -59,7 +59,7 @@ paths:
   /api/v1/developers/update/{id}:
     put:
       tags:
-      - developer-controller
+      - users-controller
       operationId: updateDeveloper
       parameters:
       - name: id
@@ -120,7 +120,7 @@ paths:
   /api/v1/developers/create:
     post:
       tags:
-      - developer-controller
+      - users-controller
       operationId: createDeveloper
       requestBody:
         content:
@@ -267,7 +267,7 @@ paths:
   /api/v1/developers:
     get:
       tags:
-      - developer-controller
+      - users-controller
       operationId: getAllDevelopers
       parameters:
       - name: sortBy
@@ -296,8 +296,8 @@ paths:
   /api/v1/developers/{id}:
     get:
       tags:
-      - developer-controller
-      operationId: getDeveloper
+      - users-controller
+      operationId: getUsers
       parameters:
       - name: id
         in: path
@@ -383,7 +383,7 @@ paths:
   /api/v1/developers/delete/{id}:
     delete:
       tags:
-      - developer-controller
+      - users-controller
       operationId: deleteDeveloper
       parameters:
       - name: id

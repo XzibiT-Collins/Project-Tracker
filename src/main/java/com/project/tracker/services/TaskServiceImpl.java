@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.tracker.dto.requestDto.TaskRequestDto;
 import com.project.tracker.dto.responseDto.StatusCountDto;
 import com.project.tracker.dto.responseDto.TaskResponseDto;
-import com.project.tracker.exceptions.customExceptions.DeveloperNotFoundException;
+import com.project.tracker.exceptions.customExceptions.UserNotFoundException;
 import com.project.tracker.exceptions.customExceptions.ProjectNotFoundException;
 import com.project.tracker.exceptions.customExceptions.TaskNotFoundException;
 import com.project.tracker.models.AuditLog;
-import com.project.tracker.models.Developer;
+import com.project.tracker.models.Users;
 import com.project.tracker.models.Project;
 import com.project.tracker.models.Task;
-import com.project.tracker.repositories.DeveloperRepository;
+import com.project.tracker.repositories.UsersRepository;
 import com.project.tracker.repositories.ProjectRepository;
 import com.project.tracker.repositories.TaskRepository;
 import com.project.tracker.services.serviceInterfaces.AuditLogService;
@@ -33,28 +33,28 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
     private final ObjectMapper objectMapper;
     private final TaskRepository taskRepository;
-    private final DeveloperRepository developerRepository;
+    private final UsersRepository usersRepository;
     private final ProjectRepository projectRepository;
     private final AuditLogService auditLogService;
 
     public TaskServiceImpl(TaskRepository taskRepository,
                            ObjectMapper objectMapper,
-                           DeveloperRepository developerRepository,
+                           UsersRepository usersRepository,
                            ProjectRepository projectRepository,
                            AuditLogService auditLogService) {
         this.taskRepository = taskRepository;
         this.objectMapper = objectMapper;
-        this.developerRepository = developerRepository;
+        this.usersRepository = usersRepository;
         this.projectRepository = projectRepository;
         this.auditLogService = auditLogService;
     }
 
     @Override
     public TaskResponseDto addTask(TaskRequestDto requestDto) {
-        Developer developer = developerRepository
-                .findById(requestDto.developerId())
-                .orElseThrow(() -> new DeveloperNotFoundException(
-                        "Developer with ID: " + requestDto.developerId() + " not found"));
+        Users users = usersRepository
+                .findById(requestDto.userId())
+                .orElseThrow(() -> new UserNotFoundException(
+                        "Users with ID: " + requestDto.userId() + " not found"));
 
         Project project = projectRepository
                 .findById(requestDto.projectId())
@@ -66,7 +66,7 @@ public class TaskServiceImpl implements TaskService {
                 .description(requestDto.description())
                 .status(requestDto.status())
                 .dueDate(requestDto.dueDate())
-                .developer(developer)
+                .users(users)
                 .project(project)
                 .build();
 
@@ -90,8 +90,8 @@ public class TaskServiceImpl implements TaskService {
         Task existingTask = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task with ID: " + id + " not found"));
 
-        Developer developer = developerRepository.findById(requestDto.developerId())
-                .orElseThrow(() -> new DeveloperNotFoundException("Developer with ID: " + requestDto.developerId() + " not found"));
+        Users users = usersRepository.findById(requestDto.userId())
+                .orElseThrow(() -> new UserNotFoundException("Users with ID: " + requestDto.userId() + " not found"));
 
         Project project = projectRepository.findById(requestDto.projectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project with ID: " + requestDto.projectId() + " not found"));
@@ -102,7 +102,7 @@ public class TaskServiceImpl implements TaskService {
                 .description(requestDto.description())
                 .status(requestDto.status())
                 .dueDate(requestDto.dueDate())
-                .developer(developer)
+                .users(users)
                 .project(project)
                 .build();
 

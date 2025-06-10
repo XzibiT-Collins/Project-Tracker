@@ -192,12 +192,12 @@ graph TB
 ### **👨‍💻 Developer Endpoints**
 | Method   | Endpoint                            | Description                         | Parameters       |
 |----------|-------------------------------------|-------------------------------------|------------------|
-| `POST`   | `/api/v1/developers/create`         | Create new developer                | Request body     |
-| `PUT`    | `/api/v1/developers/update/{id}`    | Update existing developer           | `id` (path)      |
-| `DELETE` | `/api/v1/developers/delete/{id}`    | Delete developer                    | `id` (path)      |
+| `POST`   | `/api/v1/developers/create`         | Create new users                | Request body     |
+| `PUT`    | `/api/v1/developers/update/{id}`    | Update existing users           | `id` (path)      |
+| `DELETE` | `/api/v1/developers/delete/{id}`    | Delete users                    | `id` (path)      |
 | `GET`    | `/api/v1/developers`                | Get all developers                  | `sortBy` (query) |
-| `GET`    | `/api/v1/developers/{id}`           | Get developer by ID                 | `id` (path)      |
-| `GET`    | `/api/v1/developers/top5Developers` | Get top 5 developer with most tasks | `none`           |
+| `GET`    | `/api/v1/developers/{id}`           | Get users by ID                 | `id` (path)      |
+| `GET`    | `/api/v1/developers/top5Developers` | Get top 5 users with most tasks | `none`           |
 
 **Sorting Options:**
 - `SORT_BY_ID` (Default)
