@@ -1,8 +1,8 @@
 package com.project.tracker.controllers;
 
-import com.project.tracker.dto.requestDto.DeveloperRequestDto;
-import com.project.tracker.dto.responseDto.DeveloperResponseDto;
-import com.project.tracker.services.serviceInterfaces.DeveloperService;
+import com.project.tracker.dto.requestDto.UsersRequestDto;
+import com.project.tracker.dto.responseDto.UsersResponseDto;
+import com.project.tracker.services.serviceInterfaces.UsersService;
 import com.project.tracker.sortingEnums.DeveloperSorting;
 import jakarta.validation.Valid;
 
@@ -16,62 +16,62 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/developers")
 public class DeveloperController {
-    private final DeveloperService developerService;
+    private final UsersService usersService;
 
-    public DeveloperController(DeveloperService developerService) {
-        this.developerService = developerService;
+    public DeveloperController(UsersService usersService) {
+        this.usersService = usersService;
     }
 
     @PostMapping("/create")
     @CacheEvict(value = {"developers","top5Developers"}, allEntries = true)
-    public ResponseEntity<DeveloperResponseDto> createDeveloper(@Valid @RequestBody DeveloperRequestDto request){
+    public ResponseEntity<UsersResponseDto> createDeveloper(@Valid @RequestBody UsersRequestDto request){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(developerService.addDeveloper(request));
+                .body(usersService.addDeveloper(request));
     }
 
     @DeleteMapping("delete/{id}")
     @CacheEvict(value = {"developers","top5Developers"}, allEntries = true)
     public ResponseEntity<String> deleteDeveloper(@PathVariable int id){
-        developerService.deleteDeveloper(id);
+        usersService.deleteDeveloper(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body("Developer Deleted Successfully");
+                .body("Users Deleted Successfully");
     }
 
     @PutMapping("update/{id}")
     @CacheEvict(value = {"developers","top5Developers"}, allEntries = true)
-    public ResponseEntity<DeveloperResponseDto> updateDeveloper(@PathVariable int id, @Valid @RequestBody DeveloperRequestDto request ){
+    public ResponseEntity<UsersResponseDto> updateDeveloper(@PathVariable int id, @Valid @RequestBody UsersRequestDto request ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(developerService.updateDeveloper(id,request));
+                .body(usersService.updateDeveloper(id,request));
     }
 
     @GetMapping("/{id}")
     @Cacheable(value = "developers", key = "#id")
-    public ResponseEntity<DeveloperResponseDto> getDeveloper(@PathVariable int id){
+    public ResponseEntity<UsersResponseDto> getDeveloper(@PathVariable int id){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(developerService.getDeveloperById(id));
+                .body(usersService.getDeveloperById(id));
     }
 
     @GetMapping
     @Cacheable(value = "developers", key = "T(java.util.Objects).hash(#pageNumber, #sortBy)")
-    public ResponseEntity<Page<DeveloperResponseDto>> getAllDevelopers(
+    public ResponseEntity<Page<UsersResponseDto>> getAllDevelopers(
             @RequestParam(required = false, defaultValue = "SORT_BY_ID") DeveloperSorting sortBy,
             @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(developerService.getAllDevelopers(pageNumber,sortBy.getField()));
+                .body(usersService.getAllDevelopers(pageNumber,sortBy.getField()));
     }
 
     @Cacheable(value = "top5Developers")
     @GetMapping("/top5Developers")
-    public ResponseEntity<Page<DeveloperResponseDto>> getTopDevelopers(){
+    public ResponseEntity<Page<UsersResponseDto>> getTopDevelopers(){
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(developerService.getTopDevelopers());
+                .body(usersService.getTopDevelopers());
     }
 }

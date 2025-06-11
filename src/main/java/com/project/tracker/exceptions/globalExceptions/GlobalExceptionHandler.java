@@ -1,8 +1,6 @@
 package com.project.tracker.exceptions.globalExceptions;
 
-import com.project.tracker.exceptions.customExceptions.DeveloperNotFoundException;
-import com.project.tracker.exceptions.customExceptions.ProjectNotFoundException;
-import com.project.tracker.exceptions.customExceptions.TaskNotFoundException;
+import com.project.tracker.exceptions.customExceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,6 +23,23 @@ public class GlobalExceptionHandler{
         );
     }
 
+    @ExceptionHandler(InvalidLoginDetailsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidLoginDetailsException(InvalidLoginDetailsException exception){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return buildErrorResponse(exception.getMessage(), status);
+    }
+
+    @ExceptionHandler(UserRoleNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleRoleNotFoundException(UserRoleNotFoundException exception){
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        return buildErrorResponse(exception.getMessage(), status);
+    }
+
+    @ExceptionHandler(UserAlreadyExistException.class)
+    public ResponseEntity<ErrorResponse> userAlreadyExistException(UserAlreadyExistException exception){
+        HttpStatus status = HttpStatus.CONFLICT;
+        return buildErrorResponse(exception.getMessage(), status);
+    }
 
     @ExceptionHandler(ProjectNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleProjectNotFound(ProjectNotFoundException exception) {
@@ -38,8 +53,8 @@ public class GlobalExceptionHandler{
         return buildErrorResponse(exception.getMessage(), notFound);
     }
 
-    @ExceptionHandler(DeveloperNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleDeveloperNotFound(DeveloperNotFoundException exception){
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDeveloperNotFound(UserNotFoundException exception){
         HttpStatus notFound = HttpStatus.NOT_FOUND;
         return buildErrorResponse(exception.getMessage(), notFound);
     }
