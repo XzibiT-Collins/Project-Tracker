@@ -23,6 +23,18 @@ public class GlobalExceptionHandler{
         );
     }
 
+    @ExceptionHandler(GeneralJwtException.class)
+    public ResponseEntity<ErrorResponse> handleGeneralJwtException(GeneralJwtException exception){
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        return buildErrorResponse(exception.getMessage(), status);
+    }
+
+    @ExceptionHandler(ExpiredJwtTokenException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwtTokenException(ExpiredJwtTokenException exception){
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        return buildErrorResponse(exception.getMessage(), status);
+    }
+
     @ExceptionHandler(InvalidLoginDetailsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidLoginDetailsException(InvalidLoginDetailsException exception){
         HttpStatus status = HttpStatus.BAD_REQUEST;

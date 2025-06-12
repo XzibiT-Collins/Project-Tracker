@@ -1,6 +1,8 @@
 package com.project.tracker.authentication.jwtService;
 
+import com.project.tracker.exceptions.customExceptions.ExpiredJwtTokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -50,11 +52,19 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(jwtConfig.getSecreteKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        Claims claims;
+        try {
+            claims = Jwts.parser()
+                    .verifyWith(jwtConfig.getSecreteKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (ExpiredJwtException e) {
+            throw new ExpiredJwtTokenException("Token Expired: " + e.getMessage());
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+        return claims;
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
