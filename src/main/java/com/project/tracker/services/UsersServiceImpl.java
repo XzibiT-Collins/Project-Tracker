@@ -2,6 +2,7 @@ package com.project.tracker.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.tracker.authentication.jwtService.JwtService;
 import com.project.tracker.dto.requestDto.UserLoginRequestDto;
 import com.project.tracker.dto.requestDto.UsersRequestDto;
 import com.project.tracker.dto.responseDto.UserLoginResponseDto;
@@ -39,19 +40,22 @@ public class UsersServiceImpl implements UsersService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final AuthenticationProvider authenticationProvider;
+    private final JwtService jwtService;
 
     public UsersServiceImpl(ObjectMapper objectMapper,
                             AuditLogService auditLogService,
                             PasswordEncoder passwordEncoder,
                             RoleRepository roleRepository,
                             UsersRepository usersRepository,
-                            AuthenticationProvider authenticationProvider) {
+                            AuthenticationProvider authenticationProvider,
+                            JwtService jwtService) {
         this.objectMapper = objectMapper;
         this.auditLogService = auditLogService;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.usersRepository = usersRepository;
         this.authenticationProvider = authenticationProvider;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -164,7 +168,10 @@ public class UsersServiceImpl implements UsersService {
         if(authentication.isAuthenticated()){
             //TODO generate Jwt Token
             System.out.println(authentication.getPrincipal() + "User logged in");
-            return new UserLoginResponseDto(request.email(), request.password(), "1234");
+            return new UserLoginResponseDto(
+                    request.email(),
+                    request.password(),
+                    jwtService.generateToken(request.email()));
         }
         throw new InvalidLoginDetailsException("Invalid login credentials");
     }
