@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -31,8 +30,8 @@ public class CustomOauthSuccessHandler implements AuthenticationSuccessHandler {
         System.out.println("CustomOauthSuccessHandler called onAuthenticationSuccess");
         //get user from the authentication object
         OidcUser oAuth2User =(OidcUser) authentication.getPrincipal();
-        System.out.println("Authenticated user: "+ oAuth2User.getUserInfo().getFullName());
-        String email = oAuth2User.getUserInfo().getEmail();
+        System.out.println("Authenticated user: "+ oAuth2User.getFullName());
+        String email = oAuth2User.getEmail();
 
         //generate signed token
         String token = jwtService.generateToken(email);

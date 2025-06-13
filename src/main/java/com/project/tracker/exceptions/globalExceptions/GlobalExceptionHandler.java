@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -17,7 +18,7 @@ public class GlobalExceptionHandler{
         return ResponseEntity.status(status).body(
                 ErrorResponse.builder()
                         .message(message)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(new Date())
                         .status(status.value())
                         .build()
         );

@@ -6,6 +6,7 @@ import com.project.tracker.dto.responseDto.UserLoginResponseDto;
 import com.project.tracker.dto.responseDto.UsersResponseDto;
 import com.project.tracker.services.serviceInterfaces.UsersService;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +23,9 @@ public class AuthControllers {
         this.usersService = usersService;
     }
 
+    @CacheEvict(value = {"developers","top5Developers"}, allEntries = true)
     @PostMapping("/register")
-    protected ResponseEntity<UsersResponseDto> register(@Valid @RequestBody UsersRequestDto user) {
+    public ResponseEntity<UsersResponseDto> register(@Valid @RequestBody UsersRequestDto user) {
         return ResponseEntity.ok(usersService.registerUser(user));
     }
 

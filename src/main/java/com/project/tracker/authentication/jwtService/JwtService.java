@@ -3,6 +3,7 @@ package com.project.tracker.authentication.jwtService;
 import com.project.tracker.exceptions.customExceptions.ExpiredJwtTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 @Service
 public class JwtService {
 
+    private final Logger logger = Logger.getLogger(JwtService.class.getName());
     private final JwtConfig jwtConfig;
 
     public JwtService(JwtConfig jwtConfig) {
@@ -29,6 +32,7 @@ public class JwtService {
         Date now = new Date(System.currentTimeMillis());
         Date exp = new Date(System.currentTimeMillis() + (60 * 60 * 1000 * 15)); //15 mins validation period
 
+        logger.info("Generating token for user: " + email + "\n");
         //return generated token
         return Jwts.builder()
                 .claims()
@@ -62,7 +66,7 @@ public class JwtService {
         } catch (ExpiredJwtException e) {
             throw new ExpiredJwtTokenException("Token Expired: " + e.getMessage());
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            throw new JwtException(e.getMessage());
         }
         return claims;
     }

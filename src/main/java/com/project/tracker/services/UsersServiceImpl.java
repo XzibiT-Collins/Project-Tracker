@@ -30,10 +30,11 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.logging.Logger;
 
 @Service
 public class UsersServiceImpl implements UsersService {
-
+    private final Logger logger = Logger.getLogger(UsersServiceImpl.class.getName());
     private final ObjectMapper objectMapper;
     private final UsersRepository usersRepository;
     private final AuditLogService auditLogService;
@@ -59,21 +60,55 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public UsersResponseDto addDeveloper(UsersRequestDto requestDto) {
-        Users users = Users.builder()
-                .name(requestDto.name())
-                .email(requestDto.email())
-                .skills(requestDto.skills())
+    public UsersResponseDto registerUser(UsersRequestDto requestDto) {
+        if(requestDto == null){
+            throw new UserNotFoundException("Users cannot be null");
+        }
+        if(usersRepository.existsByEmail(requestDto.email())){
+            throw new UserAlreadyExistException("User with email: " + requestDto.email() + " already exists");
+        }
+
+        Role role = roleRepository.findByName(requestDto.role().toString());
+
+        if(role == null){
+            throw new UserRoleNotFoundException("Role with name: " + requestDto.role() + " not found");
+        }
+
+        Users users = Users.builder().
+                name(requestDto.name()).
+                email(requestDto.email()).
+                password(passwordEncoder.encode(requestDto.password())).
+                role(role).
+                skills(requestDto.skills())
                 .build();
-
-        Users savedUsers = usersRepository.save(users);
-        logAudit("Create Users", String.valueOf(savedUsers.getId()), savedUsers.getName(), savedUsers);
-
-        return objectMapper.convertValue(savedUsers, UsersResponseDto.class);
+        return objectMapper.convertValue(usersRepository.save(users), UsersResponseDto.class);
     }
 
     @Override
-    public void deleteDeveloper(int id) {
+    public UserLoginResponseDto loginUser(UserLoginRequestDto request){
+        Authentication authentication = authenticationProvider.
+                authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+
+        //check if the user is successfully authenticated
+        if(authentication.isAuthenticated()){
+            System.out.println(authentication.getPrincipal() + "User logged in");
+            return new UserLoginResponseDto(
+                    request.email(),
+                    jwtService.generateToken(request.email()));
+        }
+        throw new InvalidLoginDetailsException("Invalid login credentials");
+    }
+
+    @Override
+    public UsersResponseDto getCurrentLoggedInUser(Authentication authentication) {
+        Users users = usersRepository.findByEmail(authentication.getName());
+        logger.info("Current Logged in user: " + users.getName() + " " + users.getEmail());
+
+        return objectMapper.convertValue(users, UsersResponseDto.class);
+    }
+
+    @Override
+    public void deleteUser(int id) {
         Users users = usersRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Users with ID: " + id + " not found"));
 
@@ -82,7 +117,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public UsersResponseDto updateDeveloper(int id, UsersRequestDto requestDto) {
+    public UsersResponseDto updateUser(int id, UsersRequestDto requestDto) {
         if (!usersRepository.existsById(id)) {
             throw new UserNotFoundException("Users with ID: " + id + " not found");
         }
@@ -101,7 +136,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public UsersResponseDto getDeveloperById(int id) {
+    public UsersResponseDto getUserById(int id) {
         Users users = usersRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Users with ID: " + id + " not found"));
 
@@ -110,7 +145,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Page<UsersResponseDto> getAllDevelopers(int pageNumber, String sortBy) {
+    public Page<UsersResponseDto> getAllUsers(int pageNumber, String sortBy) {
         int paginateBy = 10;
         Sort sort = Sort.by(sortBy);
         Pageable pageable = PageRequest.of(pageNumber, paginateBy, sort);
@@ -132,49 +167,7 @@ public class UsersServiceImpl implements UsersService {
                 .map(developer -> objectMapper.convertValue(developer, UsersResponseDto.class));
     }
 
-    @Override
-    public UsersResponseDto registerUser(UsersRequestDto requestDto) {
-        if(requestDto == null){
-            throw new UserNotFoundException("Users cannot be null");
-        }
-        if(usersRepository.existsByEmail(requestDto.email())){
-            throw new UserAlreadyExistException("User with email: " + requestDto.email() + " already exists");
-        }
 
-
-        Role role = roleRepository.findByName(requestDto.role().toString());
-
-        if(role == null){
-            throw new UserRoleNotFoundException("Role with name: " + requestDto.role() + " not found");
-        }
-
-        Users users = Users.builder().
-                name(requestDto.name()).
-                email(requestDto.email()).
-                password(passwordEncoder.encode(requestDto.password())).
-                role(role).
-                skills(requestDto.skills())
-                .build();
-
-        return objectMapper.convertValue(usersRepository.save(users), UsersResponseDto.class);
-    }
-
-    @Override
-    public UserLoginResponseDto loginUser(UserLoginRequestDto request){
-        Authentication authentication = authenticationProvider.
-                authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-
-        //check if user is successfully authenticated
-        if(authentication.isAuthenticated()){
-            //TODO generate Jwt Token
-            System.out.println(authentication.getPrincipal() + "User logged in");
-            return new UserLoginResponseDto(
-                    request.email(),
-                    request.password(),
-                    jwtService.generateToken(request.email()));
-        }
-        throw new InvalidLoginDetailsException("Invalid login credentials");
-    }
 
 
 
