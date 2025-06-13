@@ -6,12 +6,13 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Setter
 @Getter
 @Builder
 public class ErrorResponse {
     public String message;
-    public LocalDateTime timestamp;
+    public Date timestamp;
     public int status;
 }
