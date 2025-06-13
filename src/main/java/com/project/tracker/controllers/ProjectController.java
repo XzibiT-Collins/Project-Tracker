@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PostMapping("/create")
     @CacheEvict(value = "projects", allEntries = true)
     public ResponseEntity<ProjectResponseDto> createProject(@Valid @RequestBody ProjectRequestDto request){
@@ -29,6 +31,7 @@ public class ProjectController {
                 .body(projectService.addProject(request));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("delete/{id}")
     @CacheEvict(value = "projects", allEntries = true)
     public ResponseEntity<String> deleteProject(@PathVariable int id){
@@ -38,6 +41,7 @@ public class ProjectController {
                 .body("Project Deleted Successfully");
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PutMapping("update/{id}")
     @CacheEvict(value = "projects", allEntries = true)
     public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable int id, @Valid @RequestBody ProjectRequestDto request ){
