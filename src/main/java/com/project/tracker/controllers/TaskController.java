@@ -27,7 +27,7 @@ public class TaskController {
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @CacheEvict(value = {"tasks","overdueTasks","taskCount"}, allEntries = true)
-    @PostMapping("/create")
+    @PostMapping("")
     public ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequestDto request){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -36,7 +36,7 @@ public class TaskController {
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @CacheEvict(value = {"tasks","overdueTasks","taskCount"}, allEntries = true)
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable int id){
         taskService.deleteTask(id);
         return ResponseEntity
@@ -47,7 +47,7 @@ public class TaskController {
 //    @PreAuthorize("hasAnyRole('DEVELOPER')")
     @PreAuthorize("@accessChecker.isOwnerAdmin(#id,authentication) or @accessChecker.isOwnerOfTask(#id,authentication.name)")
     @CacheEvict(value = {"tasks","overdueTasks","taskCount"}, allEntries = true)
-    @PutMapping("update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTask(@PathVariable int id, @Valid @RequestBody TaskRequestDto request){
         return ResponseEntity
                 .status(HttpStatus.OK)

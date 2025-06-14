@@ -23,7 +23,7 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @PostMapping("/create")
+    @PostMapping("")
     @CacheEvict(value = "projects", allEntries = true)
     public ResponseEntity<ProjectResponseDto> createProject(@Valid @RequestBody ProjectRequestDto request){
         return ResponseEntity
@@ -32,7 +32,7 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     @CacheEvict(value = "projects", allEntries = true)
     public ResponseEntity<String> deleteProject(@PathVariable int id){
         projectService.deleteProject(id);
@@ -42,7 +42,7 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @PutMapping("update/{id}")
+    @PutMapping("/{id}")
     @CacheEvict(value = "projects", allEntries = true)
     public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable int id, @Valid @RequestBody ProjectRequestDto request ){
         return ResponseEntity

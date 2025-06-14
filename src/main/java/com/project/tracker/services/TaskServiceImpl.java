@@ -27,10 +27,12 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
+    private Logger logger = Logger.getLogger(TaskServiceImpl.class.getName());
     private final ObjectMapper objectMapper;
     private final TaskRepository taskRepository;
     private final UsersRepository usersRepository;
@@ -87,9 +89,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponseDto updateTask(int id, TaskRequestDto requestDto) {
+        logger.info("Task Request DTO: " + requestDto.toString() + "\n");
         Task existingTask = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task with ID: " + id + " not found"));
 
+        logger.info("User ID: " + requestDto.userId() + "\n");
         Users users = usersRepository.findById(requestDto.userId())
                 .orElseThrow(() -> new UserNotFoundException("Users with ID: " + requestDto.userId() + " not found"));
 
