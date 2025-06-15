@@ -1,6 +1,7 @@
 package com.project.tracker.authentication.oauth2Service;
 
 import com.project.tracker.models.Users;
+import com.project.tracker.models.authmodels.AuthLog;
 import com.project.tracker.models.authmodels.Role;
 import com.project.tracker.repositories.RoleRepository;
 import com.project.tracker.repositories.UsersRepository;
